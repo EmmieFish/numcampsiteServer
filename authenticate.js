@@ -16,7 +16,7 @@ exports.getToken = user => {
 }
 
 const opts = {}
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
 opts.secretOrKey = config.secretKey
 
 exports.jwtPassport = passport.use(
