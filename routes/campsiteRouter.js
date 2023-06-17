@@ -274,15 +274,28 @@ campsiteRouter
         Campsite.findById(req.params.campsiteId)
             .then((campsite) => {
                 if (campsite && campsite.comments.id(req.params.commentId)) {
-                    campsite.comments.id(req.params.commentId).remove();
-                    campsite
-                        .save()
-                        .then((campsite) => {
-                            res.statusCode = 200;
-                            res.setHeader("Content-Type", "application/json");
-                            res.json(campsite);
-                        })
-                        .catch((err) => next(err));
+                    if (
+                        req.user._id.equals(
+                            campsite.comments.id(req.params.commentId).author
+                        )
+                    ) {
+                        campsite.comments.id(req.params.commentId).remove();
+                        campsite
+                            .save()
+                            .then((campsite) => {
+                                res.statusCode = 200;
+                                res.setHeader(
+                                    "Content-Type",
+                                    "application/json"
+                                );
+                                res.json(campsite);
+                            })
+                            .catch((err) => next(err));
+                    } else {
+                        err = new Error(`NO`);
+                        err.status = 404;
+                        return next(err);
+                    }
                 } else if (!campsite) {
                     err = new Error(
                         `Campsite ${req.params.campsiteId} not found`
