@@ -142,13 +142,9 @@ favoriteRouter
     .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Favorite.findOne({ user: req.user._id })
             .then((favorites) => {
-                console.log(favorites.campsites)
-                if (favorites.campsites !== []) {
-                    favorites.campsites = favorites.campsites.filter(
-                        (campsite) => {
-                            campsite._id != req.params.campsiteId;
-                        }
-                    );
+                const idx = favorites.campsites.indexOf(req.params.campsiteId);
+                if (idx != -1) {
+                    favorites.campsites.splice(idx, 1)
                     favorites.save()
                     res.statusCode = 200;
                     res.setHeader("Content-Type", "application/json");
